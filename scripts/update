@@ -1,0 +1,12 @@
+#!/bin/zsh
+
+# Function used for "update" subcommand of zflex
+function update {
+	local repo
+	for repo in $ZFLEX_STORAGE/**/*/.git(/); do
+		git -C "${repo:h}" pull --ff --recurse-submodules --depth=1 --rebase --autostash || print -Pu2 "%F{005}Zflex: %F{001}Couldn't update: ${repo:t}%f"
+	done
+	wait
+}
+
+update "$@"

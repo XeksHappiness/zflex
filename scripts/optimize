@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+function optimize {
+	autoload -Uz zrecompile
+	local file
+	for file in $ZFLEX_STORAGE/plugin/**/*.zsh{,-theme}(N); do
+		zrecompile -pq "$file"
+	done
+}
+
+optimize "$@"
