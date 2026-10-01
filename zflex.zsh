@@ -17,7 +17,7 @@
 # Save location of this file in variable for easier use
 typeset -g ZFLEX_HOME="${0:A:h}"
 
-typeset -gx ZFLEX_STORAGE="${ZFLEX_PLUGIN_DIR:-$ZFLEX_HOME/storage/}"
+typeset -gx ZFLEX_STORAGE="${ZFLEX_STORAGE:-$ZFLEX_HOME/storage/}"
 
 # [ Main function of zflex ]
 function zflex {
@@ -98,11 +98,11 @@ function zflex {
 
 	case "$subcommand" in
 		clone)
-			$ZFLEX_HOME/scripts/clone "$tag_as" "$tag_from" "$repos"
+			$ZFLEX_HOME/scripts/clone "$tag_as" "$tag_from" "$tag_commit" "${repos[@]}"
 			$ZFLEX_HOME/scripts/optimize
 			;;
 		update)
-			$ZFLEX_HOME/scripts/update "$repos"
+			$ZFLEX_HOME/scripts/update "$repos[@]"
 			$ZFLEX_HOME/scripts/optimize
 			;;
 		plug)

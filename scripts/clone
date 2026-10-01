@@ -1,21 +1,19 @@
 #!/bin/zsh
 
+# Function used for clone subcommand of zflex
 function clone {
 	local plugin repo commitsha plugin_dir
 	local as="$1"
 	local remote="$2"
-	shift 2
+	local commitsha="$3"
+	shift 3
 
 	for plugin in "$@"; do
 		repo="$plugin"
 		clone_args=(-q --depth=1 --recursive --shallow-submodules)
 
 		# Pin repo to a specific commit sha if provided
-		# if [[ "$plugin" == *'@'* ]]; then
-		# 	repo="${plugin%@*}"
-		# 	commitsha="${plugin#*@}"
-		# 	clone_args+=(--no-checkout)
-		# fi
+		[[ -n "$commitsha" ]] && clone_args+=(--no-checkout)
 
 		plugin_dir="$ZFLEX_STORAGE/$as/$remote/${repo:h}/${repo:t}"
 
@@ -23,10 +21,10 @@ function clone {
 			git clone "${clone_args[@]}" "https://$remote/$repo" "$plugin_dir"
 
 			# Change repo to a specific commit if sha is provided
-			# if [[ -n "$commitsha" ]]; then
-			# 	git -C "$plugin_dir" fetch -q origin "$commitsha"
-			# 	git -C "$plugin_dir" checkout -q "$commitsha"
-			# fi
+			if [[ -n "$commitsha" ]]; then
+				git -C "$plugin_dir" fetch -q origin "$commitsha"
+				git -C "$plugin_dir" checkout -q "$commitsha"
+			fi
 		fi
 	done
 }
