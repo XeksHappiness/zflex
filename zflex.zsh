@@ -24,8 +24,6 @@ function zflex {
 	autoload -Uz zrecompile
 	local arg repos tags tag_as tag_from tag_from_dir tag_commit
 	local clone_args=(-q --depth=1 --recursive --shallow-submodules)
-	local subcommand="$1"
-	shift
 
 	# Parse through tags, repos and their acceptable values and return 1 if anything is wrong
 	for arg in "$@"; do
@@ -96,17 +94,14 @@ function zflex {
 		tag_from='github.com'
 	fi
 
-	case "$subcommand" in
-		clone)
-			$ZFLEX_HOME/scripts/clone "$tag_as" "$tag_from" "$tag_commit" "${repos[@]}"
-			$ZFLEX_HOME/scripts/optimize
-			;;
+	case "$1" in
 		update)
 			$ZFLEX_HOME/scripts/update "$repos[@]"
 			$ZFLEX_HOME/scripts/optimize
 			;;
-		plug)
-			print -Pu2 "%F{005}Zflex: %F{001}Isn't implemented yet%f"
+		*/*)
+			$ZFLEX_HOME/scripts/clone "$tag_as" "$tag_from" "$tag_commit" "${repos[@]}"
+			$ZFLEX_HOME/scripts/optimize
 			;;
 		*)
 			print -Pu2 "%F{005}Zflex: %F{001}Unknown subcommand: $subcommand%f"
