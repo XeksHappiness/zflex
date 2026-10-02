@@ -1,12 +1,21 @@
 #!/bin/zsh
 
+# TODO: Make better update indication for this script
+
 # Function used for "update" subcommand of zflex
 function update {
-	local arg repo confirmation
+	local arg repo
 
 	for arg in "$@"; do
 		case "$arg" in
-			'')
+			*/*)
+				for repo in $ZFLEX_STORAGE/**/${arg:h}/${arg:t}/.git(/); do
+					print -P "%F{005}Zflex: %F{003}Updating: %F{004}${repo:h:t}%f"
+					git -C "${repo:h}" pull --ff --recurse-submodules --depth=1 --rebase --autostash || print -Pu2 "%F{005}Zflex: %F{001}Couldn't update: ${repo:t}%f" &
+				done
+				wait
+				;;
+			*)
 				print -Pn "%F{005}Zflex: %F{003}Update all repos? [Y/n]: %f"
 				read -rq && print '' || return
 				for repo in $ZFLEX_STORAGE/**/.git(/); do
@@ -15,13 +24,6 @@ function update {
 				done
 				wait
 				return
-				;;
-			*/*)
-				for repo in $ZFLEX_STORAGE/**/${arg:h}/${arg:t}/.git(/); do
-					print -P "%F{005}Zflex: %F{003}Updating: %F{004}${repo:h:t}%f"
-					git -C "${repo:h}" pull --ff --recurse-submodules --depth=1 --rebase --autostash || print -Pu2 "%F{005}Zflex: %F{001}Couldn't update: ${repo:t}%f" &
-				done
-				wait
 				;;
 		esac
 	done
