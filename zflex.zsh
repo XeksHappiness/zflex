@@ -17,12 +17,12 @@
 # Save location of this file in variable for easier use
 typeset -g ZFLEX_HOME="${0:A:h}"
 
+# Location where all repos managed by zflex is stored
 typeset -gx ZFLEX_STORAGE="${ZFLEX_STORAGE:-$ZFLEX_HOME/storage/}"
 
 # [ Main function of zflex ]
 function zflex {
-	autoload -Uz zrecompile
-	local arg repos tags tag_as tag_from tag_from_dir tag_commit
+	local arg tag_as tag_from tag_from_dir tag_commit
 	local clone_args=(-q --depth=1 --recursive --shallow-submodules)
 
 	# Parse through tags, repos and their acceptable values and return 1 if anything is wrong
@@ -30,9 +30,10 @@ function zflex {
 		case "$arg" in
 				# Check if $arg is repo
 			*/*)
-				# Add repo to $repos array if it isn't present already in $repos array, skip otherwise
-				(( ${repos[(Ie)$arg]} )) || repos+=("$arg")
+				# Add repo to $ZFLEX_REPOS array if it isn't present already in it, skip otherwise
+				(( ${ZFLEX_REPOS[(Ie)$arg]} )) || ZFLEX_REPOS+=("$arg")
 				;;
+
 				# Check if $arg is tag
 			*=*|*:*)
 				case "$arg" in
@@ -72,14 +73,16 @@ function zflex {
 						tag_commit="${arg#commit?}"
 						clone_args+=(--no-checkout)
 						;;
-
 					*)
+						print -Pu2 "%F{005}Zflex: %F{001}Unknown tag: $arg%f"
+						return 1
 						;;
 				esac
 				;;
 		esac
 	done
 
+	# TODO: Switch to ztyle instead of this mess later
 	# Set $tag_as to $ZFLEX_DEFAULT_AS or "plugin" by default if "as=" tag wasn't used by user
 	if [[ -n "$tag_as" ]] && [[ -n $ZFLEX_DEFAULT_AS ]]; then
 		tag_as="$ZFLEX_DEFAULT_AS"
@@ -96,15 +99,20 @@ function zflex {
 
 	case "$1" in
 		update)
-			$ZFLEX_HOME/scripts/update "$repos[@]"
+			shift
+			$ZFLEX_HOME/scripts/update "$ZFLEX_REPOS[@]"
 			$ZFLEX_HOME/scripts/optimize
 			;;
+		source)
+			$ZFLEX_HOME/scripts/optimize
+			_zflex_source "$ZFLEX_REPOS[@]"
+			;;
 		*/*)
-			$ZFLEX_HOME/scripts/clone "$tag_as" "$tag_from" "$tag_commit" "${repos[@]}"
+			$ZFLEX_HOME/scripts/clone "$tag_as" "$tag_from" "$tag_commit" "$ZFLEX_REPOS[@]"
 			$ZFLEX_HOME/scripts/optimize
 			;;
 		*)
-			print -Pu2 "%F{005}Zflex: %F{001}Unknown subcommand: $subcommand%f"
+			print -Pu2 "%F{005}Zflex: %F{001}Unknown subcommand: $1%f"
 			return 1
 			;;
 	esac

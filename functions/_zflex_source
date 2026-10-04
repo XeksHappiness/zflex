@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+function _zflex_source() {
+	local arg initfiles
+
+	if (( $# )); then
+		for arg in "$@"; do
+			initfiles=($arg/*.{plugin.zsh,zsh-theme,zsh,sh}(N))
+			(( $#initfiles )) && source $initfiles[1]
+		done
+	else
+		print -Pu2 "%F{005}Zflex: %F{001}No repos were provided beforehand%f"
+		return 1
+	fi
+}
