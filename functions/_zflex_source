@@ -1,5 +1,4 @@
-#!/bin/zsh
-
+# Function used for "source" subcommand of zflex
 function _zflex_source() {
 	local arg initfiles
 

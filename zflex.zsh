@@ -17,8 +17,14 @@
 # Save location of this file in variable for easier use
 typeset -g ZFLEX_HOME="${0:A:h}"
 
-# Location where all repos managed by zflex is stored
+# Location where all repos managed by zflex is stored by default
 typeset -gx ZFLEX_STORAGE="${ZFLEX_STORAGE:-$ZFLEX_HOME/storage/}"
+
+# Add functions directory to $fpath
+typeset -g fpath+=("$ZFLEX_HOME/functions")
+
+# Autoload functions from functions directory
+autoload -Uz _zflex_source
 
 # [ Main function of zflex ]
 function zflex {
