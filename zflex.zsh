@@ -21,7 +21,7 @@ typeset -g ZFLEX_HOME="${0:A:h}"
 typeset -gx ZFLEX_STORAGE="${ZFLEX_STORAGE:-$ZFLEX_HOME/storage/}"
 
 # Add functions directory to $fpath
-typeset -g fpath+=("$ZFLEX_HOME/functions")
+fpath+=("$ZFLEX_HOME/functions")
 
 # Autoload functions from functions directory
 autoload -Uz zflex _zflex_source
