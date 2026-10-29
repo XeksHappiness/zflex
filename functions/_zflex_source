@@ -1,13 +1,17 @@
 # Function used for "source" subcommand of zflex
 function _zflex_source() {
 	local arg initfiles
+	local as="$1"
+	local remote="$2"
+	shift 2
 
 	if (( $# )); then
 		for arg in "$@"; do
-			initfiles=($arg/*.{plugin.zsh,zsh-theme,zsh,sh}(N))
+			initfiles=($ZFLEX_STORAGE/$as/$remote/${arg:h}/${arg:t}/*.{plugin.zsh,zsh-theme,zsh,sh}(N))
 			(( $#initfiles )) && source $initfiles[1]
 		done
 	else
+		# TODO: Add some needed logic here
 		print -Pu2 "%F{005}Zflex: %F{001}No repos were provided beforehand%f"
 		return 1
 	fi

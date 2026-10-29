@@ -83,7 +83,7 @@ function zflex {
 			;;
 		source)
 			$ZFLEX_HOME/scripts/optimize
-			_zflex_source "$ZFLEX_REPOS[@]"
+			_zflex_source "$tag_as" "$tag_from" "$ZFLEX_REPOS[@]"
 			;;
 		*/*)
 			$ZFLEX_HOME/scripts/clone "$tag_as" "$tag_from" "$tag_commit" "$ZFLEX_REPOS[@]"
