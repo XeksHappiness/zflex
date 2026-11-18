@@ -75,10 +75,12 @@ function zflex {
 		tag_from='github.com'
 	fi
 
+	# Check first argument for subcommands and run corresponding
+	# script or function accordingly
 	case "$1" in
 		update)
 			shift
-			$ZFLEX_HOME/scripts/update "$ZFLEX_REPOS[@]"
+			$ZFLEX_HOME/scripts/update "$@"
 			$ZFLEX_HOME/scripts/optimize
 			;;
 		source)
