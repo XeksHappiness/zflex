@@ -6,19 +6,28 @@
 function update {
 	local repo
 
-	if (( $# )); then
-		for repo in $ZFLEX_STORAGE/**/.git(/); do
-			print -P "%F{005}Zflex: %F{003}Updating: %F{004}${repo:h:t}%f"
-			git -C "${repo:h}" pull --ff --recurse-submodules --depth=1 --rebase --autostash || print -Pu2 "%F{005}Zflex: %F{001}Couldn't update: ${repo:h:t}%f" &
-		done
-		wait
-	else
-		for repo in $ZFLEX_STORAGE/**/$@/.git(/); do
-			print -P "%F{005}Zflex: %F{003}Updating: %F{004}${repo:h:t}%f"
-			git -C "${repo:h}" pull --ff --recurse-submodules --depth=1 --rebase --autostash || print -Pu2 "%F{005}Zflex: %F{001}Couldn't update: ${repo:t}%f" &
-		done
-		wait
-	fi
+	# Check for the options
+	case "$1" in
+			# Option which makes script to update all plugins
+		-y)
+			for repo in $ZFLEX_STORAGE/**/.git(/); do
+				print -P "%F{005}Zflex: %F{003}Updating %F{004}${repo:h:t3}%f"
+				git -C "${repo:h}" pull --ff --recurse-submodules --depth=1 --rebase --autostash &
+			done
+			wait
+			return
+			;;
+			# If no options like -y is given make it update plugins interactively
+		*)
+			for repo in $ZFLEX_STORAGE/**/.git(/); do
+				print -P "%F{005}Zflex: %F{003}Update %F{004}${repo:h:t3}%F{003}? [%F{002}y%F{003}/%F{001}N%F{003}]: %f"
+				read -rsq 2> /dev/null || continue
+				git -C "${repo:h}" pull --ff --recurse-submodules --depth=1 --rebase --autostash &
+			done
+			wait
+			return
+			;;
+	esac
 }
 
 update "$@"
